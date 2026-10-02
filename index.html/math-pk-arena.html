@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>數學江湖・雙人閃電 PK</title>
+<style>
+:root{
+  --ink:#2b2018;--gold:#d6a449;--gold2:#f4d37b;--cream:#f8efd8;
+  --red:#8d2d2d;--red2:#bd5555;--jade:#2f665b;--paper:#efe0bd;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;color:var(--ink);
+  font-family:"Noto Serif TC","Microsoft JhengHei",serif;
+  background:
+    radial-gradient(circle at 20% 15%,#fff4 0 1px,transparent 2px),
+    radial-gradient(circle at 80% 30%,#fff3 0 1px,transparent 2px),
+    linear-gradient(#2c1d25ee,#2c1d25ee),
+    repeating-linear-gradient(0deg,#3c2730 0 2px,#34222a 2px 7px);
+  min-height:100vh;overflow-x:hidden;
+}
+body:before{
+  content:"";
+  position:fixed;inset:0;pointer-events:none;opacity:.18;
+  background-image:
+    linear-gradient(90deg,transparent 48%,#f7ddab22 50%,transparent 52%),
+    linear-gradient(#0000 48%,#f7ddab16 50%,#0000 52%);
+  background-size:120px 120px;
+}
+.wrap{max-width:1080px;margin:auto;padding:18px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;color:#f7e9c5}
+.logo{font-size:30px;font-weight:1000;letter-spacing:3px;text-shadow:0 3px 6px #0008}
+.logo small{display:block;font-size:12px;letter-spacing:2px;opacity:.75}
+.stats{display:flex;gap:8px;flex-wrap:wrap}.pill{
+  padding:8px 13px;border:1px solid #e3c77a66;border-radius:999px;
+  background:#201720aa;color:#f7e9c5
+}
+.paper{
+  position:relative;margin-top:18px;border-radius:28px;padding:24px;
+  background:
+    radial-gradient(circle at 50% 0,#fff5 0 2px,transparent 3px),
+    linear-gradient(180deg,#f5ead0,#e8d3aa);
+  box-shadow:0 24px 70px #0008,inset 0 0 0 2px #fff3,inset 0 0 50px #7a4a2030;
+  border:2px solid #bf914d;
+}
+.paper:before,.paper:after{position:absolute;content:"";inset:10px;border:1px solid #7c4b2433;border-radius:22px;pointer-events:none}
+.hidden{display:none!important}
+.hero{text-align:center}
+.seal{
+  display:inline-flex;width:62px;height:62px;align-items:center;justify-content:center;
+  border:3px solid #8b2626;color:#8b2626;font-weight:1000;
+  transform:rotate(-5deg);font-size:24px;line-height:1
+}
+h1{font-size:clamp(34px,6vw,62px);margin:12px 0 5px;letter-spacing:4px}
+.subtitle{opacity:.78;font-size:15px;line-height:1.8}
+.ribbons{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:18px 0}
+.ribbon{padding:10px 15px;background:#fff8;border:1px solid #9e743d55;border-radius:14px;font-weight:900}
+.btn{border:0;cursor:pointer;border-radius:15px;padding:13px 21px;font-weight:1000;transition:.16s;box-shadow:0 8px 16px #4a281522}
+.btn:hover{transform:translateY(-2px)}.gold{background:linear-gradient(#f8dc8c,#d29c35);color:#3a220e}
+.dark{background:#38242c;color:#f9e8bd;border:1px solid #cba055}
+.mode{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:18px}
+.note{font-size:13px;opacity:.72;margin-top:15px}
+.stage-title{text-align:center;margin:0 0 8px;font-size:22px;letter-spacing:3px}
+.progress{height:10px;background:#6f4f2930;border-radius:999px;overflow:hidden;margin:8px 0 16px}
+.progress i{display:block;height:100%;background:linear-gradient(90deg,#a12f2f,#e1b34f);width:0;transition:.2s}
+.vs{display:flex;align-items:center;justify-content:center;gap:14px;margin:8px 0 14px;font-weight:1000}
+.player{
+  position:relative;padding:17px;border-radius:20px;background:#fff8;border:2px solid #815b3540;
+}
+.player.top{border-color:#ac3e3e88}.player.bottom{border-color:#2f665b88}
+.player .name{font-weight:1000;font-size:22px}.player .tag{font-size:12px;opacity:.65}
+.hearts{letter-spacing:4px;color:#9b2525;margin:4px}
+.turn{
+  margin:10px auto 15px;max-width:650px;text-align:center;
+  padding:10px 14px;border-radius:14px;background:#472c2c;color:#fbecc5;
+  font-weight:1000
+}
+.question-box{text-align:center}
+.round{color:#8d2d2d;font-weight:1000}.qtext{font-size:clamp(42px,8vw,74px);font-weight:1000;margin:18px 0 9px}
+.rule{font-size:13px;opacity:.7}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:700px;margin:16px auto}
+.opt{
+  position:relative;padding:15px;border-radius:16px;border:2px solid #97714455;background:#fff9;
+  color:var(--ink);font-size:24px;font-weight:1000;cursor:pointer
+}
+.opt:hover{background:#fff;transform:translateY(-1px)}.opt:disabled{cursor:not-allowed;opacity:.62}
+.opt b{display:inline-flex;width:30px;height:30px;border-radius:50%;align-items:center;justify-content:center;background:#7f5b3030;margin-right:6px;font-size:14px}
+.opt.selected{border-color:#ad3b3b;background:#ffe7d8}.opt.correct{border-color:#347260;background:#dbefe7}.opt.wrong{border-color:#9c2c2c;background:#f7d7d0}
+.feedback{text-align:center;min-height:38px;font-weight:1000;font-size:18px;margin-top:7px}
+.voice{display:inline-block;font-size:12px;opacity:.7;margin-left:5px}
+.duel-grid{display:grid;grid-template-rows:1fr auto 1fr;gap:12px;align-items:center}
+@media(max-width:760px){.options{grid-template-columns:1fr}.paper{padding:17px}.logo{font-size:24px}}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}
+@media(max-width:700px){.result-grid{grid-template-columns:1fr}}
+.result-card{padding:18px;border-radius:18px;background:#fff8;border:1px solid #8a643f44}
+.big{font-size:46px;font-weight:1000;color:#8d2d2d}
+table{width:100%;border-collapse:collapse}th,td{padding:9px;border-bottom:1px solid #8b653e33}th{color:#7e4324;text-align:left}
+.trophy{font-size:70px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#24171d;color:#ffecc4;padding:12px 18px;border-radius:999px;opacity:0;pointer-events:none;transition:.25s;z-index:10;box-shadow:0 8px 30px #0008}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div class="logo">⚔️ 數學江湖 <small>MATH ARENA · DOUBLE DUEL</small></div>
+    <div class="stats">
+      <div class="pill">🪙 <b id="coins">100</b></div>
+      <div class="pill">🌸 <b id="flowers">0</b></div>
+      <div class="pill">🏆 <b id="wins">0</b> 勝</div>
+    </div>
+  </div>
+
+  <section id="home" class="paper hero">
+    <div class="seal">數<br>學</div>
+    <h1>數學江湖・雙人閃電 PK</h1>
+    <div class="subtitle">兩人坐在螢幕上下方，同時看題、同時搶答。<br>四選一、5 題定勝負。比的不只腦力，還有反應速度與膽量！</div>
+    <div class="ribbons">
+      <div class="ribbon">⚡ 快答有加分</div><div class="ribbon">🎯 5/5 完美獎</div>
+      <div class="ribbon">🌸 連勝小花</div><div class="ribbon">👑 最後晉級</div>
+    </div>
+    <div class="mode">
+      <button class="btn gold" onclick="startGame('easy')">竹林試煉 · 新手</button>
+      <button class="btn gold" onclick="startGame('normal')">江湖擂台 · 標準</button>
+      <button class="btn gold" onclick="startGame('hard')">天命決戰 · 困難</button>
+    </div>
+    <div class="note">建議兩個人輪流按自己的答案：上方玩家用 A/W/D/E 鍵，下方玩家用 J/I/L/O 鍵，也可以直接點選按鈕。</div>
+  </section>
+
+  <section id="game" class="paper hidden">
+    <div class="stage-title">「一念之間，勝負只在眨眼。」</div>
+    <div class="vs"><span id="roundLabel">第 1 局</span><span>⚔️</span><span id="qLabel">第 1 / 5 題</span></div>
+    <div class="progress"><i id="progress"></i></div>
+
+    <div class="duel-grid">
+      <div class="player top">
+        <div class="name">🔴 玩家一</div><div class="tag">上方席・先發劍客</div>
+        <div class="hearts" id="p1Hearts">❤❤❤</div>
+        <div id="p1Status" class="feedback">請出招！</div>
+        <div class="options" id="p1Options"></div>
+      </div>
+
+      <div class="question-box">
+        <div class="rule">本題剩餘時間 <b id="time">7.0</b> 秒</div>
+        <div class="qtext" id="question">8 × 7 = ?</div>
+        <div id="voiceHint" class="rule">🔊答對會有真人感語音鼓勵</div>
+      </div>
+
+      <div class="player bottom">
+        <div class="name">🟢 玩家二</div><div class="tag">下方席・追風劍客</div>
+        <div class="hearts" id="p2Hearts">❤❤❤</div>
+        <div id="p2Status" class="feedback">請出招！</div>
+        <div class="options" id="p2Options"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="result" class="paper hidden hero">
+    <div id="resultIcon" class="trophy">🏆</div>
+    <h1 id="resultTitle">晉級！</h1>
+    <p id="resultText"></p>
+    <div class="ribbons">
+      <div class="ribbon">🔴 玩家一：<b id="p1Score">0</b>/5</div>
+      <div class="ribbon">🟢 玩家二：<b id="p2Score">0</b>/5</div>
+      <div class="ribbon">🪙 本局 +<b id="earnedCoins">0</b></div>
+      <div class="ribbon">🌸 小花 +<b id="earnedFlowers">0</b></div>
+    </div>
+    <button class="btn gold" onclick="nextRound()">⚔️ 再戰一局</button>
+    <button class="btn dark" onclick="showHome()">🏯 回擂台</button>
+  </section>
+
+  <section id="final" class="paper hidden">
+    <div class="hero">
+      <div class="trophy">👑</div>
+      <h1>天下第一・誕生</h1>
+      <p>恭喜完成五局賽事，以下是本次最終晉級名單。</p>
+      <div class="big" id="finalScore">0 分</div>
+    </div>
+    <div class="result-grid">
+      <div class="result-card"><h3>🏅 最終名單</h3><table><thead><tr><th>名次</th><th>選手</th><th>總答對</th></tr></thead><tbody id="ranking"></tbody></table></div>
+      <div class="result-card"><h3>⚔️ 對戰紀錄</h3><div id="bracket"></div></div>
+    </div>
+    <div class="hero" style="margin-top:20px"><button class="btn gold" onclick="showHome()">🔁 再來一次</button></div>
+  </section>
+</div>
+<div id="toast" class="toast"></div>
+
+<script>
+const state={
+ coins:+localStorage.getItem('mathCoins')||100,
+ flowers:+localStorage.getItem('mathFlowers')||0,
+ wins:+localStorage.getItem('mathWins')||0,
+ mode:'normal',round:1,q:0,timer:null,timeLeft:7,questions:[],
+ p1:{score:0,answered:false,choice:null},p2:{score:0,answered:false,choice:null},
+ history:[]
+};
+
+const praise=[
+ "太厲害了！你這反應，快得像閃電！",
+ "漂亮！這一題答得像愛因斯坦一樣聰明！",
+ "好眼力！你根本就是數學天才！",
+ "神來一手！這個速度讓對手都看呆了！",
+ "漂亮出招！你的腦袋今天開掛啦！",
+ "穩、準、快！這就是冠軍氣勢！",
+ "太精彩了！這一題漂亮得像諸葛亮算無遺策！",
+ "絕了！你就像達文西一樣，腦筋轉得飛快！"
+];
+function save(){localStorage.setItem('mathCoins',state.coins);localStorage.setItem('mathFlowers',state.flowers);localStorage.setItem('mathWins',state.wins);updateStats()}
+function updateStats(){coins.textContent=state.coins;flowers.textContent=state.flowers;wins.textContent=state.wins}
+function show(id){['home','game','result','final'].forEach(x=>document.getElementById(x).classList.toggle('hidden',x!==id))}
+function showHome(){clearInterval(state.timer);show('home');updateStats()}
+function toast(t){const x=document.getElementById('toast');x.textContent=t;x.classList.add('show');setTimeout(()=>x.classList.remove('show'),1500)}
+function speak(t){
+ try{
+   if(!('speechSynthesis' in window)) return;
+   speechSynthesis.cancel();
+   const u=new SpeechSynthesisUtterance(t);u.lang='zh-TW';u.rate=.98;u.pitch=1.08;u.volume=1;
+   speechSynthesis.speak(u);
+ }catch(e){}
+}
+function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a}
+function makeQuestion(mode){
+ const max=mode==='easy'?20:mode==='normal'?50:100;
+ const type=rand(1,4);let a,b,op,ans;
+ if(type===1){a=rand(1,max);b=rand(1,max);op='＋';ans=a+b}
+ if(type===2){a=rand(1,max);b=rand(1,a);op='－';ans=a-b}
+ if(type===3){a=rand(2,mode==='hard'?15:12);b=rand(2,mode==='hard'?15:12);op='×';ans=a*b}
+ if(type===4){b=rand(2,mode==='hard'?12:9);ans=rand(2,mode==='hard'?12:10);a=b*ans;op='÷'}
+ return {text:`${a} ${op} ${b} = ?`,ans}
+}
+function optionsFor(ans){
+ const s=new Set([ans]);
+ while(s.size<4){
+   const spread=Math.max(3,Math.ceil(Math.abs(ans)*.25));
+   const n=Math.max(0,ans+rand(-spread,spread)||rand(1,10));
+   s.add(n);
+ }
+ return [...s].sort(()=>Math.random()-.5);
+}
+function startGame(mode){
+ clearInterval(state.timer);state.mode=mode;state.round=1;state.history=[];
+ beginRound();
+}
+function beginRound(){
+ state.q=0;state.p1.score=0;state.p2.score=0;state.questions=Array.from({length:5},()=>makeQuestion(state.mode));
+ show('game');document.getElementById('roundLabel').textContent=`第 ${state.round} 局`;nextQuestion();
+}
+function buildOptions(el,player){
+ el.innerHTML='';
+ const opts=optionsFor(state.questions[state.q].ans);
+ opts.forEach((v,i)=>{
+   const b=document.createElement('button');b.className='opt';
+   b.innerHTML=`<b>${['A','B','C','D'][i]}</b>${v}`;
+   b.onclick=()=>choose(player,v,b,opts);
+   el.appendChild(b);
+ });
+}
+function nextQuestion(){
+ if(state.q>=5){endRound();return}
+ state.p1.answered=state.p2.answered=false;state.p1.choice=state.p2.choice=null;
+ qLabel.textContent=`第 ${state.q+1} / 5 題`;
+ progress.style.width=((state.q)/5*100)+'%';
+ question.textContent=state.questions[state.q].text;
+ p1Status.textContent='請出招！';p2Status.textContent='請出招！';
+ buildOptions(p1Options,1);buildOptions(p2Options,2);
+ startTimer();
+}
+function startTimer(){
+ clearInterval(state.timer);
+ const max=state.mode==='easy'?9:state.mode==='normal'?7:5;
+ state.timeLeft=max;time.textContent=max.toFixed(1);
+ state.timer=setInterval(()=>{
+   state.timeLeft-=.1;time.textContent=Math.max(0,state.timeLeft).toFixed(1);
+   if(state.timeLeft<=0){clearInterval(state.timer);resolveQuestion(null,null,'timeout')}
+ },100);
+}
+function disableOptions(player){
+ const el=player===1?p1Options:p2Options;el.querySelectorAll('button').forEach(b=>b.disabled=true);
+}
+function choose(player,value,button,opts){
+ if(player===1&&state.p1.answered)return;if(player===2&&state.p2.answered)return;
+ const correct=value===state.questions[state.q].ans;
+ const p=player===1?state.p1:state.p2;p.answered=true;p.choice=value;
+ button.classList.add(correct?'correct':'wrong');disableOptions(player);
+ const status=player===1?p1Status:p2Status;
+ if(correct){p.score++;status.textContent='⚡ 答對！';status.className='feedback correct';speak(praise[rand(0,praise.length-1)]);toast(player===1?'🔴 玩家一搶先得分！':'🟢 玩家二反超得分！')}
+ else{status.textContent=`❌ 答錯（正解 ${state.questions[state.q].ans}）`;status.className='feedback wrong'}
+ if(state.p1.answered&&state.p2.answered){resolveQuestion(correct?player:null,null,'both')}
+}
+function resolveQuestion(who,unused,reason){
+ clearInterval(state.timer);
+ if(reason==='timeout'){
+   if(!state.p1.answered)p1Status.textContent='⏰ 上方玩家超時';
+   if(!state.p2.answered)p2Status.textContent='⏰ 下方玩家超時';
+ }
+ setTimeout(()=>{state.q++;nextQuestion()},500);
+}
+function endRound(){
+ clearInterval(state.timer);
+ const a=state.p1.score,b=state.p2.score;
+ let winner=a>b?1:b>a?2:(Math.random()<.5?1:2);
+ const draw=a===b;
+ const bonus=(Math.max(a,b)*8)+(draw?10:25);
+ state.coins+=Math.max(5,bonus);
+ if(winner===1||winner===2)state.wins++;
+ let flowers=(Math.max(a,b)===5?1:0);
+ state.flowers+=flowers;save();
+ state.history.push({round:state.round,p1:a,p2:b,winner,draw});
+ p1Score.textContent=a;p2Score.textContent=b;earnedCoins.textContent=Math.max(5,bonus);earnedFlowers.textContent=flowers;
+ if(draw){resultIcon.textContent='🔥';resultTitle.textContent='勢均力敵！';resultText.textContent=`${a}:${b} 平分秋色！本局以氣勢決勝，兩位都很強。`;speak('勢均力敵！兩位都太厲害了！')}
+ else{
+   const wn=winner===1?'玩家一':'玩家二';
+   resultIcon.textContent='🏆';resultTitle.textContent=`${wn} 晉級！`;resultText.textContent=`最終戰果 ${a}:${b}。${Math.max(a,b)===5?'五題全對！完美表現！':''}`;speak(`${wn} 晉級！太厲害了！你有冠軍氣勢！`);
+ }
+ show('result');
+}
+function nextRound(){
+ if(state.round>=5){finishTournament();return}
+ state.round++;beginRound();
+}
+function finishTournament(){
+ const total1=state.history.reduce((s,x)=>s+x.p1,0),total2=state.history.reduce((s,x)=>s+x.p2,0);
+ const champ=total1>=total2?'玩家一':'玩家二';
+ finalScore.textContent=`${champ} · ${Math.max(total1,total2)} 題答對`;
+ const rows=[['👑 玩家一',total1],['🟢 玩家二',total2],['🤖 數學學者',rand(12,22)],['🐉 計算宗師',rand(10,20)]].sort((a,b)=>b[1]-a[1]);
+ ranking.innerHTML=rows.map((r,i)=>`<tr><td>${i+1}</td><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('');
+ bracket.innerHTML=state.history.map(x=>`<div style="padding:9px 0;border-bottom:1px solid #8b653e33">第 ${x.round} 局：${x.p1} : ${x.p2}　<b>${x.draw?'平手':(x.winner===1?'玩家一勝':'玩家二勝')}</b></div>`).join('');
+ show('final');speak(`恭喜${champ}，成為本次數學江湖的冠軍！`);
+}
+document.addEventListener('keydown',e=>{
+ if(document.getElementById('game').classList.contains('hidden'))return;
+ const k=e.key.toLowerCase();
+ const map1={a:0,w:1,d:2,e:3},map2={j:0,i:1,l:2,o:3};
+ const m1=map1[k],m2=map2[k];
+ if(m1!==undefined&&!state.p1.answered){p1Options.querySelectorAll('button')[m1]?.click()}
+ if(m2!==undefined&&!state.p2.answered){p2Options.querySelectorAll('button')[m2]?.click()}
+});
+updateStats();
+</script>
+</body>
+</html>
